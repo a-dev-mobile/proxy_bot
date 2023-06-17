@@ -30,12 +30,12 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if msg and chat and msg.text:
         keyboard = [
             [
-                KeyboardButton("Рандомный прокси"),
-                KeyboardButton("Свежий прокси"),
+                KeyboardButton("1 вар."),
+                KeyboardButton("2 вар."),
             ],
         ]
         reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
-        await msg.reply_text("Выберите кнопку:", reply_markup=reply_markup)
+        await msg.reply_text("Выберите кнопку для поиска работающих IP прокси:", reply_markup=reply_markup)
 
 
 # Обработчик нажатий на кнопки
@@ -45,12 +45,12 @@ async def button_click(update, context):
     print(text)
     global is_running
     is_running = True
-    if text == "Рандомный прокси":
+    if text == "1 вар.":
         global rand
         rand = True
         list_proxy.clear()
         await start_proxy(update, context)
-    elif text == "Свежий прокси":
+    elif text == "2 вар.":
         # list_proxy.clear()
         rand = False
         await start_proxy(update, context)
