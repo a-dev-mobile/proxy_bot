@@ -1,17 +1,22 @@
-# Используйте официальный образ Python в качестве базового образа
-FROM python:3.7.17-slim
+# Start from a Debian image with the latest version of Go installed
+# and a workspace (GOPATH) configured at /go.
+FROM golang:latest
 
-# Установите рабочую директорию внутри контейнера
-WORKDIR /app
+# Create a directory inside the container to store all our application and then make it the working directory.
+RUN mkdir -p /go/src/app
+WORKDIR /go/src/app
 
-# Скопируйте файлы зависимостей в контейнер
-COPY src/requirements.txt .
-
-# Установите зависимости проекта
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Скопируйте остальные файлы проекта в контейнер
+# Copy everything from the current directory to the PWD(Present Working Directory) inside the container
 COPY . .
 
-# Установите команду запуска приложения
-CMD ["python", "/app/src/main.py"]
+# Download all the dependencies
+RUN go get -d -v ./...
+
+# Build the Go app
+RUN go build -o main .
+
+# This container exposes port 8080 to the outside world
+EXPOSE 8080
+
+# Run the executable
+CMD ["./main"] >> /var/log/app.log 2>&1
