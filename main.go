@@ -119,19 +119,30 @@ func fetchProxies() []*goquery.Document {
 }
 
 // fetchAndParseProxies fetches and parses proxies concurrently
+// parseProxiesFromDocuments fetches and parses proxies concurrently
 func parseProxiesFromDocuments(docs []*goquery.Document) []Proxy {
 	// Parse proxies from documents
-	var proxies []Proxy
+	proxies := make(map[string]Proxy)
 	for _, doc := range docs {
 		ps, err := parseProxies(doc)
 		if err != nil {
 			log.Fatal("Failed to parse proxies: ", err)
 		}
-		proxies = append(proxies, ps...)
+		for _, p := range ps {
+			if _, exists := proxies[p.IPAddress]; !exists {
+				proxies[p.IPAddress] = p
+			}
+		}
+	}
+
+	// Convert map back to slice
+	uniqueProxies := make([]Proxy, 0, len(proxies))
+	for _, p := range proxies {
+		uniqueProxies = append(uniqueProxies, p)
 	}
 
 	// Concurrently check proxies
-	return proxies
+	return uniqueProxies
 }
 
 // fetchDocuments fetches a list of documents
