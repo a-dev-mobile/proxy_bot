@@ -19,4 +19,4 @@ RUN go build -o main .
 EXPOSE 8080
 
 # Run the executable
-CMD ["./main"] >> /var/log/app.log 2>&1
+CMD ["./main"]

@@ -101,10 +101,12 @@ func sendMessage(bot *tgbotapi.BotAPI, chatID int64, text string) tgbotapi.Messa
 
 func fetchProxies() []*goquery.Document {
 	urls := []string{
-		"https://www.us-proxy.org/",
+		"https://www.socks-proxy.net/",
 		"https://free-proxy-list.net/",
-		"https://free-proxy-list.net/uk-proxy.html",
+		"https://www.us-proxy.org/",
 		"https://www.sslproxies.org",
+		"https://free-proxy-list.net/uk-proxy.html",
+		"https://free-proxy-list.net/anonymous-proxy.html",
 	}
 
 	// Fetch documents
