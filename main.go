@@ -56,7 +56,7 @@ func main() {
 
 		proxyListRaw := parseProxiesFromDocuments(documents)
 
-		// sendMessage(bot, update.Message.Chat.ID, fmt.Sprintf("%s %d %s", "Found", len(proxyListRaw), "proxies"))
+		sendMessage(bot, update.Message.Chat.ID, fmt.Sprintf("%s %d %s", "Found", len(proxyListRaw), "proxies"))
 
 		sentMessageDel := sendMessage(bot, update.Message.Chat.ID, "Finding working proxies...")
 
@@ -66,7 +66,11 @@ func main() {
 
 		var proxyInfo string
 		for i, proxy := range proxyList {
-			proxyInfo += fmt.Sprintf("%d\n%s:%s\n%s %v\n\n", i+1, proxy.IPAddress, proxy.Port, proxy.Country, proxy.ResponseTime)
+			proxyInfo += fmt.Sprintf("%d\n%s:%s\n%s %v\nhttps: %s\n\n",
+				i+1,
+				proxy.IPAddress, proxy.Port,
+				proxy.Country, proxy.ResponseTime,
+				proxy.Https)
 		}
 
 		sendMessage(bot, update.Message.Chat.ID, fmt.Sprintf("%s %d %s", "Found", len(proxyList), "working proxies"))
