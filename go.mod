@@ -1,4 +1,4 @@
-module turn_gen_bot
+module proxy_finder_bot
 
 go 1.20
 
