@@ -210,6 +210,7 @@ func checkProxiesConcurrently(proxies []Proxy, concurrentGoroutines int) []Proxy
 			defer wg.Done()
 			for _, proxy := range proxyGroups[i] {
 				proxy.ResponseTime, proxy.Working = checkProxy(proxy)
+
 				if proxy.Working {
 					mu.Lock()
 					workingProxies = append(workingProxies, proxy)
@@ -232,11 +233,14 @@ func checkProxiesConcurrently(proxies []Proxy, concurrentGoroutines int) []Proxy
 
 // checkProxy checks if a proxy is working and returns its response time and status
 func checkProxy(p Proxy) (time.Duration, bool) {
-	proxyURL := fmt.Sprintf("http://%s:%s", p.IPAddress, p.Port)
-	httpProxy, _ := url.Parse(proxyURL)
+	proxyURL, err := url.Parse(fmt.Sprintf("http://%s:%s", p.IPAddress, p.Port))
+	if err != nil {
+		fmt.Println("failed to parse proxy URL: %w", err)
+		return 0, false
+	}
 
 	netTransport := &http.Transport{
-		Proxy: http.ProxyURL(httpProxy),
+		Proxy: http.ProxyURL(proxyURL),
 		DialContext: (&net.Dialer{
 			Timeout:   30 * time.Second,
 			KeepAlive: 30 * time.Second,
@@ -249,18 +253,35 @@ func checkProxy(p Proxy) (time.Duration, bool) {
 		Transport: netTransport,
 	}
 
-	request, _ := http.NewRequest("GET", "https://www.youtube.com/", nil)
+	// List of websites to check
+	websites := []string{
+		"https://www.youtube.com/",
+		"https://www.google.com/",
+		"https://www.amazon.com/",
+		"https://www.wikipedia.org/",
+		// "https://www.linkedin.com/",
+	
+	}
 
 	start := time.Now()
-	response, err := httpClient.Do(request)
-	elapsed := time.Since(start)
+	for _, website := range websites {
+		request, err := http.NewRequest("GET", website, nil)
+		if err != nil {
+			fmt.Println("failed to create request: %w", err)
+			return 0, false
+		}
 
-	p.ResponseTime = elapsed
+		response, err := httpClient.Do(request)
+		if err != nil {
+			return time.Since(start), false
+		}
+		defer response.Body.Close()
 
-	if err != nil {
-		return p.ResponseTime, false
+		if response.StatusCode != http.StatusOK && response.StatusCode != http.StatusFound {
+			return time.Since(start), false
+		}
 	}
-	defer response.Body.Close()
 
-	return p.ResponseTime, response.StatusCode == 200
+	fmt.Println("200 status ", proxyURL)
+	return time.Since(start), true
 }
