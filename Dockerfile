@@ -1,6 +1,6 @@
 # Start from a Debian image with the latest version of Go installed
 # and a workspace (GOPATH) configured at /go.
-FROM golang:latest
+FROM golang:1.21.3
 
 # Create a directory inside the container to store all our application and then make it the working directory.
 RUN mkdir -p /go/src/app

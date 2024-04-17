@@ -222,7 +222,9 @@ func checkProxiesConcurrently(proxies []Proxy, concurrentGoroutines int) []Proxy
 	}
 
 	wg.Wait()
-
+	if len(workingProxies) > 10 {
+		workingProxies = workingProxies[:10]
+	}
 	// Sort proxies by response time
 	sort.Slice(workingProxies, func(i, j int) bool {
 		return workingProxies[i].ResponseTime < workingProxies[j].ResponseTime
