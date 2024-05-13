@@ -258,9 +258,9 @@ func checkProxy(p Proxy) (time.Duration, bool) {
 	// List of websites to check
 	websites := []string{
 		"https://www.youtube.com/",
-		"https://www.google.com/",
-		"https://www.amazon.com/",
-		"https://www.wikipedia.org/",
+		"https://medium.com/",
+
+
 		// "https://www.linkedin.com/",
 	
 	}
