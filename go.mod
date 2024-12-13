@@ -10,5 +10,5 @@ require (
 require (
 	github.com/andybalholm/cascadia v1.3.2 // indirect
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
-	golang.org/x/net v0.11.0 // indirect
+	golang.org/x/net v0.17.0 // indirect
 )
